@@ -1,0 +1,8 @@
+void EditorNode::_on_vector_ai_pressed() {
+	// Toggle the VectorAI sidebar visibility
+	vector_ai_sidebar_visible = !vector_ai_sidebar_visible;
+	vector_ai_sidebar->set_visible(vector_ai_sidebar_visible);
+	
+	// Update the button state
+	vector_ai_button->set_pressed(vector_ai_sidebar_visible);
+} 

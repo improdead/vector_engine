@@ -1,0 +1,37 @@
+// VectorAI Sidebar Integration Patch for editor_node.cpp
+
+// 1. Add include (around line 163, after editor_theme_manager.h):
+#include "editor/vector_ai/vector_ai_sidebar.h"
+
+// 2. Add method declaration to editor_node.h (should already exist):
+void _on_vector_ai_pressed();
+
+// 3. Add toggle method implementation (add after _version_control_menu_option):
+void EditorNode::_on_vector_ai_pressed() {
+	// Toggle the VectorAI sidebar visibility
+	vector_ai_sidebar_visible = !vector_ai_sidebar_visible;
+	vector_ai_sidebar->set_visible(vector_ai_sidebar_visible);
+	
+	// Update the button state
+	vector_ai_button->set_pressed(vector_ai_sidebar_visible);
+}
+
+// 4. Add dock registration (add after line 7473, after history_dock):
+	// VectorAI: Bottom right, for AI assistance
+	vector_ai_sidebar = memnew(VectorAISidebar);
+	editor_dock_manager->add_dock(vector_ai_sidebar, TTR("VectorAI"), EditorDockManager::DOCK_SLOT_RIGHT_BR, nullptr, "Script");
+	vector_ai_sidebar_visible = true;
+
+// 5. Add button creation (add in constructor after main editor buttons setup):
+	// Create VectorAI toggle button in title bar
+	vector_ai_button = memnew(Button);
+	vector_ai_button->set_theme_type_variation("MainScreenButton");
+	vector_ai_button->set_text("🤖 AI");
+	vector_ai_button->set_toggle_mode(true);
+	vector_ai_button->set_focus_mode(Control::FOCUS_NONE);
+	vector_ai_button->set_pressed(true); // Start pressed since sidebar is visible
+	vector_ai_button->connect(SceneStringName(pressed), callable_mp(this, &EditorNode::_on_vector_ai_pressed));
+	// Add to right menu area or main button area
+
+// 6. Update default layout (add to dock configuration):
+	default_layout->set_value(docks_section, "dock_6", "VectorAI"); 
